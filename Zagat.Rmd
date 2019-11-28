@@ -142,11 +142,12 @@ plot(Heating$ROOMS, Heating$FUELBILL)
 - b) Find the linear regression equation resulting from regression of FUELBILL on ROOMS.
 Give an interpretation for the slope and the intercept.
 ```{r}
-regHeating = lm(Heating$FUELBILL~Heating$ROOMS)
+#regHeating = lm(Heating$FUELBILL~Heating$ROOMS)
+regHeating = lm(FUELBILL~ROOMS, data = Heating)
 regHeating
 
 #Slope: For every additional room, you can expect fuelbill to increase by an average of 136.2
-#Intercept:If there a re no rooms, the expected value for fuelbill is -251.9. The intercept is negative which is hard to since fuelbill is meant to be either 0 or positive
+#Intercept:If there are no rooms, the expected value for fuelbill is -251.9. The intercept is negative which is hard to since fuelbill is meant to be either 0 or positive
 ```
 
 - c) Test the hypothesis that the true slope of the regression line is zero.
@@ -161,7 +162,7 @@ print(q)
 print(k)
 tstat <- b1/sb1
 print(tstat)
-confint(regHeating, 'Heating$ROOMS', level=0.95)
+confint(regHeating, 'ROOMS', level=0.95)
 
 #We reject the null hypothesis and accept that the slope of the regression line is not zero(0).
 ```

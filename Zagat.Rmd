@@ -1,0 +1,235 @@
+---
+title: "Peter_Lanker"
+author: "Aadam"
+date: "13/11/2019"
+---
+
+## Peter Lanker Practice question
+
+1. Import the Zagat file in R
+```{r}
+zagat = read.table('Zagat.csv',
+                    sep = ',',
+                    header = TRUE,
+                    stringsAsFactor = TRUE)
+```
+
+
+- a) Create a graph of the empirical distribution function for the variable Price.
+```{r}
+lm = ecdf(zagat$Price)
+plot(lm)
+```
+
+- b) What percent of the restaurants in our database have Price value less than or equal to $40?
+```{r}
+f <- length(subset(zagat$Name, zagat$Price >= 40))
+percent <- (f/300)*100
+print(percent)
+```
+
+- c) Calculate the mean and the standard deviation for the Price variable.
+```{r}
+m_price = mean(zagat$Price)
+print(m_price)
+```
+
+
+```{r}
+sd_price = sd(zagat$Price)
+print(sd_price)
+```
+
+
+- d) What percent of the Price data falls within 2 standard deviations from the mean?
+```{r}
+U2=lm(m_price+2*sd_price)
+D2=lm(m_price-2*sd_price)
+SD2 = (U2-D2) * 100
+print(SD2)
+```
+
+2. In production line 5% of the produced items is defective (typically this proportion is un-
+known; we assume it to be known for the sake of this exercise). A quality control inspector
+selects a random sample of n = 20 items.
+
+- a) What is the probability that there will be no defective item in the sample?
+
+Probability that an item is defective is 5% (0.05) while probability that an item is not defective is 1 - 0.05 = 0.95 (95%). Therefore the probability that there would be no defective item in the sample is 
+```{r}
+print(0.95**20)
+```
+
+- b) what is the probability that there will be at least 1 defective item in the sample?
+The probability that there would be at least 1 defective batch in the sample is
+```{r}
+print(1-(0.95**20))
+```
+
+3. A normal random variable X has mean 3.0 and standard deviation 0.2. What is the
+probability that X falls between 2.75 and 3.1?
+```{r}
+p = pnorm(2.75,mean=3,sd=0.2)
+q = pnorm(3.1,mean=3,sd=0.2)
+print(q-p)
+
+```
+
+
+4. Suppose that X follows normal distribution with mean 5.5 and standard deviation 0.3.
+Find a number w such that X < w with 30% probability.
+```{r}
+(qnorm(0.3, mean=5.5, sd=0.3))
+```
+
+5. Bluefish purchased at the Lime Beach Fishing Terminal produce a filet weight which
+has a mean of 4.5 pounds with a standard deviation of 0.8 pound. If a restaurant manager
+purchases 50 such fish, then what is the probability that she will have at least 220 pounds
+of filets?
+
+```{r}
+q = pnorm(228,mean=200,sd=40)
+print(1-q)
+```
+
+6. A company is interested in estimating μ, the mean number of days of sick leave during
+the last year taken by all its employees. They select a random sample of 100 employees and
+note the number of sick days taken by each employee in the sample. The following sample
+statistics are computed: ¯x = 12.2 days, s = 3 days. Find a 95% confidence interval for μ.
+```{r}
+m <- 12.2
+s <- 3
+t = qt(0.975, df = 99)
+l= m-t*s/sqrt(100)
+u= m+t*s/sqrt(100)
+print(l)
+print(u)
+```
+
+7. A firm that manages rental properties is assessing an expansion into an expensive area
+is San Francisco. To cover its costs, the firm needs the average rent in this area to be more
+than $1,500 per month. They set up two hypothesis: H0 : μ = 1500 and Ha : μ > 1500.
+In order to make a decision the firm obtained rents for a sample of n = 115 rental units in the area. Among these, the average rent is $1,657 with sample standard deviation s = 581.
+
+- a) Test the above hypothesis at 5% significance level.
+```{r}
+t_stat <- ((1657 - 1500)/581) * sqrt(115)
+t_5 <- qt(.975, df = 114)
+print(t_stat)
+print(t_5)
+#SO, we reject H0. The difference between the sample mean $1,657 and $1,500 is statistically different at 5% 
+``` 
+
+- b) Calculate the p-value for this test.
+```{r}
+tval <- pt(t_stat, 114)
+print(1 - tval)
+```
+8. The data file file HEATING deals with the heating bill for dwelling units of various
+numbers of rooms. Use R whenever possible in answering the following questions.
+```{r}
+Heating = read.table('HEATING.csv',
+                    sep = ',',
+                    header = TRUE,
+                    stringsAsFactor = TRUE)
+```
+- a) Obtain a scatter-plot of the two variables. Which variable should be on the horizontal
+axis?
+```{r}
+plot(Heating$ROOMS, Heating$FUELBILL)
+```
+
+- b) Find the linear regression equation resulting from regression of FUELBILL on ROOMS.
+Give an interpretation for the slope and the intercept.
+```{r}
+regHeating = lm(Heating$FUELBILL~Heating$ROOMS)
+regHeating
+
+#Slope: For every additional room, you can expect fuelbill to increase by an average of 136.2
+#Intercept:If there a re no rooms, the expected value for fuelbill is -251.9. The intercept is negative which is hard to since fuelbill is meant to be either 0 or positive
+```
+
+- c) Test the hypothesis that the true slope of the regression line is zero.
+```{r}
+summary(regHeating)
+tq <- qt(.975, df = 142)
+b1 <- 136.169
+sb1 <- 7.098
+q <- (b1 + (tq * sb1))
+k <- (b1 - (tq * sb1))
+print(q)
+print(k)
+tstat <- b1/sb1
+print(tstat)
+confint(regHeating, 'Heating$ROOMS', level=0.95)
+
+#We reject the null hypothesis and accept that the slope of the regression line is not zero(0).
+```
+
+
+- d) Predict the FUELBILL for a unit with ROOMS=6.
+```{r}
+estimate <- (-251.9 + (136.2 * 6))
+print(estimate)
+```
+
+- e) Create a 95% confidence interval for the average FUELBILL of all dwelling units in this
+population with ROOMS=6.
+```{r}
+x = Heating$ROOMS
+y = Heating$FUELBILL
+new = data.frame(x = 6)
+conf = predict(lm(y~x), new, interval="confidence")
+print(conf)
+
+```
+
+- f) Create a 95% prediction interval for a particular dwelling unit with ROOMS variable
+equal to 6.
+```{r}
+pred = predict(lm(y~x), new, interval = "prediction")
+pred
+```
+
+- g) A particular 6 room unit last year had a heating bill of $958. Do you find this amount
+unusually high?
+
+```{r}
+plot(x,y)
+lines(x,pred[,1], col="blue",lwd=2)
+lines(x,pred[,2], col="green",lwd=2)
+lines(x,pred[,3], col="green",lwd=2)
+lines(x,confid[,2], col="red",lwd=2)
+lines(x,confid[,3], col="red",lwd=2)
+
+#Yes!
+```
+
+9. You are considering a quality inspection scheme to use on the spark plugs which are sent
+from your supplier. These spark plugs come in a shipments of 50,000. Denote the unknown
+proportion of defective spark plugs in the shipment by p. Ideally you would like to reject the
+shipment if p > .05 and accept it if p ≤ .05. In practice you can’t follow this plan since you
+don’t know p. Instead you decide to apply a scheme that consists of the following steps:
+
+A random sample of 20 of the spark plugs will be selected from each shipment. Each of
+the selected plugs will be tested to see whether it is defective or not. (The test involves
+measuring the plug gap and determining the electrical resistance.) You will note as X the
+(random) number of defective plugs in the sample. If X < 2 then the shipment passes your
+quality standard. If X ≥ 2 then the shipment fails the quality test and will be returned to
+the supplier.
+
+- a) Find the probability that the shipment is rejected when p = .05 (this corresponds to an
+“error” since at p = .05 we would want to accept the shipment).
+
+
+- b) Find the probability that the shipment is accepted when p = .1 (this corresponds to an
+“error” again since at p = .1 we would want to reject the shipment).
+
+- c) Find the probability that the shipment is accepted when p = .2.
+
+
+
+10. We would like to modify the quality control test described in question 9 above in the
+following way. We want to pass the shipment if X < w and reject the shipment when
+X ≥ w where w is a number to be determined. Determine the smallest possible value for w
+such that the probability of rejecting the shipment when p = .05 is no more than .01, i.e., 1%. 

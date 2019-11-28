@@ -19,3 +19,4 @@ nchar('The boy')
 nchar(c('the', 'boy', 'goes'))
 
 
+

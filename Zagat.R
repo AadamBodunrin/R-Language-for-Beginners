@@ -17,7 +17,7 @@ dim(zagat)
 #Show the object type
 class(zagat)
 
-#show the object type of column food
+#show the object type of column Name
 class(zagat$Name)
 
 #show the structure of the object
@@ -25,6 +25,7 @@ str(zagat)
 
 #returns basic statistics summary 
 summary(zagat)
+
 
 #return basic statistics about price
 summary(zagat$Price)

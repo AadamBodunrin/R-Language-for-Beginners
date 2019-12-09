@@ -7,12 +7,6 @@ username <- readline("What's your preferred username? ")
 #Concatenate username, and "d". Print the output
 print(paste(username,",", d))
 
-#view the first few rows of the iris dataset
-print(head(iris))
-
-#print the dimension of the iris dataset i.e. row V column
-print(dim(iris))
-
 #print all the numbers from 1 to 25 using. 
 print(seq_len(25))
 
@@ -51,4 +45,22 @@ nchar("The boy")
 nchar(c("the", "boy", "goes"))
 
 
+#view the first few rows of the iris dataset
+print(head(iris))
+
+#print the dimension of the iris dataset i.e. row V column
+print(dim(iris))
+
+#Print the unique items in the species column
+print(levels(iris$Species))
+
+data("mtcars")
+summary(mtcars)
+
+efficient <- subset(mtcars, mtcars$mpg >= 23)
+dim(efficient)
+efficient
+
+
+subset(mtcars, mtcars$mpg > 30 & mtcars$hp >100)
 

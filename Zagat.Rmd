@@ -1,6 +1,6 @@
 ---
-title: "Peter_Lanker"
-author: "Aadam"
+title: "Statistics and R"
+author: "Aadam Bodunrin"
 date: "13/11/2019"
 ---
 
@@ -17,8 +17,8 @@ zagat = read.table('Zagat.csv',
 
 - a) Create a graph of the empirical distribution function for the variable Price.
 ```{r}
-lm = ecdf(zagat$Price)
-plot(lm)
+ec = ecdf(zagat$Price)
+plot(ec)
 ```
 
 - b) What percent of the restaurants in our database have Price value less than or equal to $40?
@@ -43,8 +43,8 @@ print(sd_price)
 
 - d) What percent of the Price data falls within 2 standard deviations from the mean?
 ```{r}
-U2=lm(m_price+2*sd_price)
-D2=lm(m_price-2*sd_price)
+U2=ec(m_price+2*sd_price)
+D2=ec(m_price-2*sd_price)
 SD2 = (U2-D2) * 100
 print(SD2)
 ```
@@ -142,8 +142,7 @@ plot(Heating$ROOMS, Heating$FUELBILL)
 - b) Find the linear regression equation resulting from regression of FUELBILL on ROOMS.
 Give an interpretation for the slope and the intercept.
 ```{r}
-#regHeating = lm(Heating$FUELBILL~Heating$ROOMS)
-regHeating = lm(FUELBILL~ROOMS, data = Heating)
+regHeating = lm(Heating$FUELBILL~Heating$ROOMS)
 regHeating
 
 #Slope: For every additional room, you can expect fuelbill to increase by an average of 136.2
@@ -205,32 +204,3 @@ lines(x,confid[,3], col="red",lwd=2)
 
 #Yes!
 ```
-
-9. You are considering a quality inspection scheme to use on the spark plugs which are sent
-from your supplier. These spark plugs come in a shipments of 50,000. Denote the unknown
-proportion of defective spark plugs in the shipment by p. Ideally you would like to reject the
-shipment if p > .05 and accept it if p ≤ .05. In practice you can’t follow this plan since you
-don’t know p. Instead you decide to apply a scheme that consists of the following steps:
-
-A random sample of 20 of the spark plugs will be selected from each shipment. Each of
-the selected plugs will be tested to see whether it is defective or not. (The test involves
-measuring the plug gap and determining the electrical resistance.) You will note as X the
-(random) number of defective plugs in the sample. If X < 2 then the shipment passes your
-quality standard. If X ≥ 2 then the shipment fails the quality test and will be returned to
-the supplier.
-
-- a) Find the probability that the shipment is rejected when p = .05 (this corresponds to an
-“error” since at p = .05 we would want to accept the shipment).
-
-
-- b) Find the probability that the shipment is accepted when p = .1 (this corresponds to an
-“error” again since at p = .1 we would want to reject the shipment).
-
-- c) Find the probability that the shipment is accepted when p = .2.
-
-
-
-10. We would like to modify the quality control test described in question 9 above in the
-following way. We want to pass the shipment if X < w and reject the shipment when
-X ≥ w where w is a number to be determined. Determine the smallest possible value for w
-such that the probability of rejecting the shipment when p = .05 is no more than .01, i.e., 1%. 

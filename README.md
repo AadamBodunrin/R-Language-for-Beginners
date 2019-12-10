@@ -1,8 +1,9 @@
 # R Language Repository
 
-All codes will be found in the *Zagat.R* file. Every other files used for analysis are in their respective `.csv` file.
+The *Zagat.R* file include code used to analyse *zagat.csv*. All *.RMD* files includes analysis of the other *.csv* files.
 
-The *`R_Newbies.R`* file is made up of codes i picked up learning from different materials. 
+
+The *`R_Newbies.R`* file is made up of codes I picked up learning from different materials. 
 
 #### To-do List
 

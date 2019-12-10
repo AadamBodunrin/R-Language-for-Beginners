@@ -1,0 +1,235 @@
+---
+title: "Practice Exercise"
+author: "Aadam Bodunrin"
+date: "10/12/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+VOTE <- read.csv("VOTE.CSV")
+```
+
+```{r}
+plot(VOTE$ratiomach, VOTE$ratioabs, col = "red")
+```
+
+```{r}
+Election = VOTE
+Election = VOTE[-22,]
+```
+
+```{r}
+xelection = Election$ratiomach
+yelection = Election$ratioabs
+newvalue = data.frame(xelection = .97)
+predelection = predict(lm(yelection~xelection), newvalue, interval = "prediction")
+predelection
+```
+
+```{r}
+xfull=VOTE$ratiomach
+yfull=VOTE$ratioabs
+newx = seq(min(xfull), max(xfull), 0.01)
+mod1=lm(yfull~xfull)
+a = predict(mod1, newdata=data.frame(xfull=newx), interval="prediction")
+plot(xfull,yfull)
+lines(newx,a[,2], lty=3,col="green")
+lines(newx,a[,3], lty=3,col="green")
+```
+
+
+```{r}
+pred99 = predict(lm(yelection~xelection), newvalue, interval="prediction",level=.99)
+pred99
+```
+
+
+```{r}
+pred999 = predict(lm(yelection~xelection), newvalue, interval="prediction",level=.999)
+pred999
+
+```
+
+```{r}
+zagat = read.table("Zagat.CSV", header = TRUE, sep = ",")
+```
+
+```{r}
+zagatmod= lm(Price~ Food + Decor + Service, data = zagat)
+summary(zagatmod)
+```
+
+```{r}
+library(leaps)
+leaps= regsubsets(Price~ Food+Decor+Service, data=zagat, nbest=3)
+plot(leaps, scale="r2")
+```
+
+```{r}
+cor(zagat$Price,zagat$Food)
+```
+
+```{r}
+y <- cor(zagat[,unlist(lapply(zagat, is.numeric))])
+print(y)
+```
+
+```{r}
+gfclocks <- read.csv("Gfclocks.CSV")
+```
+
+```{r}
+age = gfclocks$AGE
+price = gfclocks$PRICE
+plot(age, price, col = "red")
+```
+
+```{r}
+numbids = gfclocks$NUMBIDS
+plot(numbids, price, col = "brown")
+```
+
+```{r}
+gfclockscor <- cor(gfclocks[,unlist(lapply(gfclocks, is.numeric))])
+gfclockscor
+```
+
+```{r}
+clocks = lm(price~age + numbids)
+summary(clocks)
+```
+
+```{r}
+confint(clocks, 'age', level=0.9)
+```
+
+```{r}
+leaps=regsubsets(price~age+numbids, data=gfclocks, nbest=2)
+plot(leaps, scale="r2")
+```
+
+```{r}
+gfclocknewdata <- data.frame(age = 150, numbids = 10)
+int <- predict(lm(clocks), newdata = gfclocknewdata, interval = "confidence")
+int
+
+```
+
+```{r}
+pint <- predict(lm(clocks), newdata = gfclocknewdata, interval = "prediction")
+pint
+```
+
+```{r}
+new <- data.frame(age = 50, numbids = 2)
+pred <- predict(lm(clocks), newdata = new, interval = "confidence")
+pred2 <- predict(lm(clocks), newdata = new, interval = "prediction")
+pred
+pred2
+```
+
+
+```{r}
+Diamonds <-read.csv("Diamonds.CSV")
+```
+
+```{r}
+regdiamonds <- lm(Diamonds$PRICE~Diamonds$CARAT)
+summary(regdiamonds)
+```
+
+```{r}
+regdiam.res=resid(regdiamonds)
+plot(Diamonds$CARAT, regdiam.res)
+```
+
+```{r}
+fit=fitted(regdiamonds)
+plot(fit,regdiam.res)
+```
+
+```{r}
+shapiro.test(regdiam.res)
+
+```
+
+```{r}
+logprice=log(Diamonds$PRICE)
+reg.new=lm(logprice~Diamonds$CARAT)
+summary(reg.new)
+```
+
+```{r}
+reg.new.res=resid(reg.new)
+plot(Diamonds$CARAT,reg.new.res)
+```
+
+```{r}
+shapiro.test(reg.new.res)
+```
+
+```{r}
+admission <-read.csv("binary-1.csv")
+```
+
+```{r}
+mylogit <- glm(admit ~ gre + gpa, data = admission, family = "binomial")
+summary(mylogit)
+```
+
+```{r}
+newdata = data.frame(gre=500, gpa=3.2)
+predict(mylogit, newdata, type="response")
+```
+
+```{r}
+swiss
+
+```
+
+```{r}
+step(lm(Fertility~Agriculture+Examination+Education+Catholic+Infant.Mortality,
+data=swiss),direction="backward")
+```
+
+```{r}
+null=lm(Fertility~1,data=swiss)
+full=lm(Fertility~.,data=swiss)
+step(null, scope=list(lower=null,upper=full),direction="forward")
+```
+
+```{r}
+library(glmnet)
+x=cbind(swiss$Agriculture, swiss$Examination, swiss$Education, swiss$Catholic, swiss$Infant.Mortality)
+colnames(x, do.NULL = FALSE)
+colnames(x) = c("Agriculture","Examination","Education", "Catholic",
+"Infant.Mortality" )
+fit=glmnet(x,swiss$Fertility)
+plot(fit, xvar = "lambda", label = TRUE)
+
+```
+
+```{r}
+print(fit)
+```
+```{r}
+coef(fit, s = 1.06)
+```
+
+```{r}
+cvfit = cv.glmnet(x, swiss$Fertility)
+cvfit
+```
+
+```{r}
+cvfit$lambda.min
+cvfit$lambda.1se
+```
+
+```{r}
+library(leaps)
+leaps=regsubsets(Fertility~ .,data=swiss, nbest=1)
+plot(leaps, scale="r2")
+```
+

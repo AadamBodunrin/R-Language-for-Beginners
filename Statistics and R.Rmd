@@ -2,6 +2,7 @@
 title: "Statistics and R"
 author: "Aadam Bodunrin"
 date: "13/11/2019"
+output: pdf_document
 ---
 
 ## Peter Lanker Practice question
@@ -23,7 +24,7 @@ plot(ec)
 
 - b) What percent of the restaurants in our database have Price value less than or equal to $40?
 ```{r}
-f <- length(subset(zagat$Name, zagat$Price >= 40))
+f <- length(subset(zagat$Name, zagat$Price <= 40))
 percent <- (f/300)*100
 print(percent)
 ```
@@ -43,8 +44,8 @@ print(sd_price)
 
 - d) What percent of the Price data falls within 2 standard deviations from the mean?
 ```{r}
-U2=ec(m_price+2*sd_price)
-D2=ec(m_price-2*sd_price)
+U2=ec(m_price+(2*sd_price))
+D2=ec(m_price-(2*sd_price))
 SD2 = (U2-D2) * 100
 print(SD2)
 ```
@@ -88,8 +89,8 @@ purchases 50 such fish, then what is the probability that she will have at least
 of filets?
 
 ```{r}
-q = pnorm(228,mean=200,sd=40)
-print(1-q)
+q = pnorm(220,mean=4.5,sd=0.8)
+print(q)
 ```
 
 6. A company is interested in estimating μ, the mean number of days of sick leave during
@@ -161,9 +162,9 @@ print(q)
 print(k)
 tstat <- b1/sb1
 print(tstat)
-confint(regHeating, 'ROOMS', level=0.95)
+confint(regHeating, 'Heating$ROOMS', level=0.95)
 
-#We reject the null hypothesis and accept that the slope of the regression line is not zero(0).
+#We reject the null hypothesis and accept that the slope of the regression line is zero(0).
 ```
 
 
@@ -179,7 +180,7 @@ population with ROOMS=6.
 x = Heating$ROOMS
 y = Heating$FUELBILL
 new = data.frame(x = 6)
-conf = predict(lm(y~x), new, interval="confidence")
+conf = predict(lm(y~x), new, interval="confidence", level = 0.95)
 print(conf)
 
 ```
@@ -195,6 +196,9 @@ pred
 unusually high?
 
 ```{r}
+x6 <- data.frame(x)
+pred=predict(regHeating, x6, interval="prediction")
+confid=predict(regHeating, x6, interval="confidence")
 plot(x,y)
 lines(x,pred[,1], col="blue",lwd=2)
 lines(x,pred[,2], col="green",lwd=2)

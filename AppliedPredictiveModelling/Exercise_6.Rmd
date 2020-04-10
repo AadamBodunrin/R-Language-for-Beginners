@@ -1,0 +1,86 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(AppliedPredictiveModeling)
+library(caret)
+library(elasticnet)
+library(pls)
+library(RColorBrewer)
+library(reshape2)
+data(ChemicalManufacturingProcess)
+```
+
+
+```{r}
+#Splitting the Dataset into dependent and independent variable
+
+pred <- subset(ChemicalManufacturingProcess,select= -Yield)
+yield <- subset(ChemicalManufacturingProcess,select="Yield")
+```
+
+
+```{r}
+#b)
+n_samples = dim(pred)[1]
+n_features = dim(pred)[2]
+
+```
+
+```{r}
+replacements = sapply( pred, median, na.rm=TRUE )
+for( ci in 1:n_features ){
+  bad_inds = is.na( pred[,ci] )
+  pred[bad_inds,ci] = replacements[ci]
+}
+```
+
+
+```{r}
+zero_cols = nearZeroVar(pred)
+print( sprintf("Found %d zero variance columns from %d",length(zero_cols), dim(pred)[2] ) )
+processPredictors = pred[,-zero_cols]
+```
+
+```{r}
+#C) Split the data into training and test sets
+trainingRows <- createDataPartition(yield$Yield,p = 0.7,list = FALSE)
+trainPredictors <- pred[trainingRows,]
+trainYield <- yield[trainingRows,]
+
+testPredictors <- pred[-trainingRows,]
+testYield <- yield[-trainingRows,]
+```
+
+```{r}
+#d) 
+pp <- preProcess(trainPredictors,method=c("BoxCox","center","scale","knnImpute"))
+ppTrainPredictors <- predict(pp,trainPredictors)
+ppTestPredictors <- predict(pp,testPredictors)
+summary(pp)
+
+```
+
+```{r}
+nzvpp <- nearZeroVar(ppTrainPredictors)
+ppTrainPredictors <- ppTrainPredictors[-nzvpp]
+ppTestPredictors <- ppTestPredictors[-nzvpp]
+```
+
+
+```{r}
+predcorr = cor(ppTrainPredictors)
+highCorrpp <- findCorrelation(predcorr)
+ppTrainPredictors <- ppTrainPredictors[, -highCorrpp]
+ppTestPredictors <- ppTestPredictors[, -highCorrpp]
+```
+
+```{r}
+ctrl <- trainControl(method = "boot", number = 25)
+plsTune <- train(x = ppTrainPredictors, y = trainYield, method = "pls", tuneLength = 15, trControl = ctrl)
+summary(plsTune)
+```
+

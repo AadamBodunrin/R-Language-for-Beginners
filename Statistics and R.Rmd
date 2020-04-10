@@ -103,7 +103,7 @@ s <- 3
 t = qt(0.975, df = 99)
 l= m-t*s/sqrt(100)
 u= m+t*s/sqrt(100)
-print(l)
+sprint(l)
 print(u)
 ```
 

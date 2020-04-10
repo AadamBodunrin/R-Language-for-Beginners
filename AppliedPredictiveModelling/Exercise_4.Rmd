@@ -1,0 +1,34 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+4.1 
+
+(a) What data splitting method(s) would you use for these data? Explain.
+(b) Using tools described in this chapter, provide code for implementing your
+approach(es).
+
+Two things to focus on when splitting data is 
+* the number of samples relative to the number of predictors in the data
+* the distribution of samples across classes.
+
+In this case, the number of samples is 12495 and the number of predictors is 191. The
+number of samples is more than 65 fold greater than the number of predictors, we likely can split
+the data into a training set and test set.
+
+On the distribution of samples across classes, it is evident that there is an imbalance in the gere category in the entire data set while some have fewer. The total samples in the dataset is large enough for resampling or cross-validation techniques can randomly select samples across the different genre in similar proportion to the entire datase
+
+4.2 
+(a) What data splitting method(s) would you use for these data? Explain.
+(b) Using tools described in this chapter, provide code for implementing your
+approach(es).
+
+Here, the dataset is different from that of the music category, we have number of samples to be 165 and the number of predictors is 1107. As such, spliting the dataset into training and testing dataset will not be very efficient. 
+
+The focus of analysing this would be to use resampling performance measures to select optimal
+tuning parameters and predictive performances.
+
+
+4.3
+

@@ -83,7 +83,7 @@ print(percent)
 
 #1. Import the zagat file. This action is the first code in this file.
 
-#2. Use the Multiple regression command and iew the summary of the command
+#2. Use the Multiple regression command and view the summary of the command
 zagatmod= lm(Price~ Food +Decor+Service, data = zagat)
 print(summary(zagatmod))
 

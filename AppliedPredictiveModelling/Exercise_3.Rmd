@@ -1,0 +1,132 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library('mlbench')
+data("Glass")
+str(Glass)
+```
+
+
+```{r}
+#3.1a
+library(GGally)
+data <- Glass
+pairs (~ RI + Na + Mg + Al +Si + K + Ca + Ba + Fe , data = data, lower.panel = panel.smooth) 
+```
+
+
+```{r}
+ggplot(Glass,aes(x=Type))+
+  geom_bar(fill="steelblue",colour="black")+
+  ggtitle("Number of Observations by Type of Glass")
+```
+
+
+```{r}
+#3.1b
+for(i in 1:9){
+  plot(Glass$Type,Glass[,i],col="steelblue",
+     xlab="Type of Glass",ylab=names(Glass)[i],main=paste("Series Chart",i,": Box Plot of Chemical Elements",
+          names(Glass)[i],"by Type of Glass"))
+}
+```
+
+From the graphs above, it is clear that there are outliers present in the data. We can also see that some of the predictors are both skewed to the right and to the left.
+
+
+```{r}
+transform <- preProcess(Glass, method = c("BoxCox", "center", "scale", "pca"))
+transform
+
+transformed <- predict(transform, Glass)
+head(transformed[, 1:5])
+```
+
+
+
+```{r}
+#3.2
+library(mlbench)
+data(Soybean)
+```
+
+
+```{r}
+#3,2a
+X <- Soybean[,2:36]
+par(mfrow = c(3, 6))
+for (i in 1:ncol(X)) {
+  smoothScatter(X[ ,i], ylab = names(X[i]))
+}
+```
+The charts show that all variables have few unique values. There are a few that could possibly be degenerate due to the low frequencies in some of the values. The two most glaring examples are mycelium and sclerotia. The Smoothed Density Scatterplot for those variables shows one solid color across the whole chart.
+
+```{r}
+library(caret)
+nearZeroVar(X, names = TRUE, saveMetrics=T)
+```
+
+Using the nearZero function, only mycelium, sclerotia, and leaf.mild have near-zero variance (“nzv”). No variable has zero variance (“zeroVar”).
+
+
+```{r}
+#3.2b
+library(VIM)
+aggr(Soybean, prop = c(T, T), bars=T, numbers=T, sortVars=T)
+```
+The bar chart shows several predictors variables have over 15% of their values missing.
+
+```{r}
+library(dplyr)
+Soybean %>%
+  mutate(Total = n()) %>% 
+  filter(!complete.cases(.)) %>%
+  group_by(Class) %>%
+  mutate(Missing = n(), Proportion=Missing/Total) %>%
+  select(Class, Missing, Proportion) %>%
+  unique()
+```
+The majority of the missing values are in the phytophthora-rot class which has nearly 10% incomplete cases.
+
+```{r}
+library(mice)
+MICE <- mice(Soybean, method="pmm", printFlag=F, seed=624)
+aggr(complete(MICE), prop = c(T, T), bars=T, numbers=T, sortVars=T)
+```
+The simple imputation method used in here is Predictive Mean Matching (PMM) which “imputes missing values by means of the nearest-neighbor donor with distance based on the expected values of the missing variables conditional on the observed covariates.
+
+
+
+```{r}
+#3.3a
+library(caret)
+data(BloodBrain)
+
+```
+
+```{r}
+#3.3 b
+nearZeroVar(bbbDescr)
+```
+
+```{r}
+cor_rel <- cor(bbbDescr)
+dim(cor_rel)
+```
+
+```{r}
+cor_predictors <- findCorrelation(cor_rel, cutoff = 0.75)
+```
+
+```{r}
+new_data <- bbbDescr[ , -c(cor_predictors)]
+```
+
+```{r}
+dim(new_data)
+```
+
